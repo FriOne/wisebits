@@ -1,53 +1,54 @@
 <script lang="ts">
-  import Card from "./components/Card.svelte";
-  import FabButton from "./components/FabButton.svelte";
+  import { onMount } from 'svelte';
+  import Card from './components/Card.svelte';
+  import FabButton from './components/FabButton.svelte';
+  import Spinner from './components/Spinner.svelte';
+  import { fetchCoffee } from './libs/fetchCoffee';
+  import type { Coffee } from './types';
 
-  type Coffee = {
-    id: number;
-    uid: string;
-    blend_name: string;
-    origin: string;
-    variety: string;
-    notes: string[];
-    intensifier: string;
-  };
+  const AUTOLOAD_INTERVAL = 30000;
+  let newDataDownloadTimeout;
+  let newDataIsLoading = false;
+  let coffees: Coffee[] = [];
 
-  type CoffeeWithImage = Coffee & {
-    image?: string;
-  };
+  async function fetchNewData(alertMessage?: string) {
+    if (newDataIsLoading) {
+      return;
+    }
+    newDataIsLoading = true;
+    clearTimeout(newDataDownloadTimeout);
 
-  let coffees: CoffeeWithImage[] = [
-    {
-      id: 3417,
-      uid: '9c772363-8362-48a2-b871-cdbbea018b86',
-      blend_name: 'Blue Enlightenment',
-      origin: 'Chiriqui, Panama',
-      variety: 'Ethiopian Heirloom',
-      notes: ['crisp', 'coating', 'black-tea', 'peanut', 'tobacco', 'crisp', 'coating', 'black-tea', 'peanut', 'tobacco'],
-      intensifier: 'juicy',
-      // image: 'https://loremflickr.com/cache/resized/65535_52828262361_234c4acb3b_c_500_500_nofilter.jpg',
-    },
-    {
-      id: 3418,
-      uid: '9c772363-8362-48a2-b871-cdbbea018b86',
-      blend_name: 'Blue Enlightenment',
-      origin: 'Chiriqui, Panama',
-      variety: 'Ethiopian Heirloom',
-      notes: ['crisp', 'coating', 'black-tea', 'peanut', 'tobacco', 'crisp', 'coating', 'black-tea', 'peanut', 'tobacco'],
-      intensifier: 'juicy',
-      image: 'https://loremflickr.com/cache/resized/65535_52828262361_234c4acb3b_c_500_500_nofilter.jpg',
-    },
-  ];
+    try {
+      const loadedCoffee = await fetchCoffee();
+      coffees = [...coffees, loadedCoffee];
+    } catch (error) {
+      console.error(error);
+      if (alertMessage) {
+        alert(alertMessage);
+      }
+    } finally {
+      newDataIsLoading = false;
+      createTimeoutFetch();
+    }
+  }
+
+  function createTimeoutFetch() {
+    newDataDownloadTimeout = setTimeout(() => fetchNewData(), AUTOLOAD_INTERVAL);
+  }
+
+  onMount(() => {
+    void fetchNewData('There is an error, please, reload the page');
+  });
 
   function handleAddClick() {
-    console.log('add');
+    void fetchNewData('There is an error, please, try again');
   }
 </script>
 
 <div class="root">
   {#each coffees as coffee (coffee.id)}
     <Card
-      image={coffee.image}
+      image={'https://loremflickr.com/300/250/coffee'}
       topImageText={coffee.intensifier}
       infoText={coffee.origin}
       title={coffee.blend_name}
@@ -55,7 +56,14 @@
       chips={coffee.notes}
     />
   {/each}
-  <FabButton class="add-button" on:click={handleAddClick} />
+  {#if newDataIsLoading}
+    <Spinner />
+  {/if}
+  <FabButton
+    class="add-button"
+    disabled={newDataIsLoading}
+    on:click={handleAddClick}
+  />
 </div>
 
 <style>

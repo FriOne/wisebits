@@ -1,4 +1,7 @@
-<button class="root {$$props.class}" on:click>
+<script lang="ts">
+  export let disabled = false;
+</script>
+<button class="root {$$props.class}" disabled="{disabled}" on:click>
 </button>
 
 <style>
@@ -20,5 +23,9 @@
 
   .root:hover {
     --bg-color: #409f55;
+  }
+
+  .root[disabled] {
+    --bg-color: #808080;
   }
 </style>

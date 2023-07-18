@@ -25,7 +25,7 @@
 
   .chip {
     flex: 1 0 auto;
-    max-width: 100px;
+    max-width: 130px;
     padding: 3px 10px;
     box-sizing: border-box;
     white-space: nowrap;

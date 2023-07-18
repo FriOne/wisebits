@@ -1,16 +1,34 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+
   import Chips from './Chips.svelte';
 
-  export let image = 'https://placehold.co/300x250?text=coffee&font=roboto';
+  export let image;
   export let topImageText = '';
   export let infoText = '';
   export let title = '';
   export let subtitle = '';
   export let chips: string[] = [];
+
+  let internalImage = 'https://placehold.co/300x250?text=coffee&font=roboto';
+  const reader = new FileReader();
+  reader.onloadend = () => internalImage = reader.result as string;
+
+  onMount(async () => {
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      reader.readAsDataURL(blob);
+    } catch (error) {}
+  });
+
+  onDestroy(() => {
+    reader.onloadend = undefined;
+  });
 </script>
 
 <div class="root">
-  <div class="image" style:background-image="url('{image}')">
+  <div class="image" style:background-image="url('{internalImage}')">
     <div class="image-text">
       {topImageText}
     </div>
@@ -48,6 +66,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-color: #808080;
+    transition: background-image .5s ease-in-out;
     border-top-right-radius: calc(var(--border-radius) - 1px);
     border-top-left-radius: calc(var(--border-radius) - 1px);
     box-shadow: 0 40px 40px 0 rgba(0, 0, 0, 0.25) inset;
