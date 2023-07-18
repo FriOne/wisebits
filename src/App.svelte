@@ -45,9 +45,11 @@
   }
 </script>
 
-<div class="root">
-  {#each coffees as coffee (coffee.id)}
+<div class="root" style="--cards-count: {coffees.length}">
+  {#each coffees as coffee, i (coffee.id)}
     <Card
+      class="app__card"
+      style="--card-index: {i}"
       image={'https://loremflickr.com/300/250/coffee'}
       topImageText={coffee.intensifier}
       infoText={coffee.origin}
@@ -57,10 +59,13 @@
     />
   {/each}
   {#if newDataIsLoading}
-    <Spinner />
+    <Spinner
+      class="app__spinner"
+      style="--position: {coffees.length + 1}"
+    />
   {/if}
   <FabButton
-    class="add-button"
+    class="app__add-button"
     disabled={newDataIsLoading}
     on:click={handleAddClick}
   />
@@ -68,14 +73,47 @@
 
 <style>
   .root {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--cards-gap);
-    padding: 30px 30px calc(30px + var(--add-button-height) + var(--cards-gap));
+    position: relative;
+    height: calc(
+      var(--page-padding) +
+      var(--spinner-size) +
+      var(--add-button-height) +
+      var(--cards-count) * (var(--card-height) + var(--cards-gap))
+    );
+    padding: var(--page-padding);
+    /* index is set for each card element directly */
+    --card-index: 0;
+    --cards-count: 0;
+    --page-padding: 30px;
+    --card-height: 405px;
+    --cards-gap: 50px;
+    --add-button-height: 50px;
+    --spinner-size: 50px;
   }
 
-  :global(.add-button) {
+  :global(.app__card) {
+    position: absolute;
+    top: calc(
+      var(--page-padding) +
+      var(--card-index) * (var(--card-height) + var(--cards-gap))
+    );
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+  }
+
+  :global(.app__spinner) {
+    position: absolute;
+    top: calc(
+      var(--page-padding) +
+      var(--cards-count) * (var(--card-height) + var(--cards-gap))
+    );
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+  }
+
+  :global(.app__add-button) {
     position: fixed;
     right: 0;
     bottom: 20px;

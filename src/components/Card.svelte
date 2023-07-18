@@ -27,7 +27,7 @@
   });
 </script>
 
-<div class="root">
+<div class="root {$$props.class}" style={$$props.style}>
   <div class="image" style:background-image="url('{internalImage}')">
     <div class="image-text">
       {topImageText}
@@ -54,6 +54,7 @@
     width: 300px;
     border: 1px solid rgba(0, 0, 0, .125);
     border-radius: var(--border-radius);
+    background-color: #fff;
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 
     --border-radius: 8px;
