@@ -16,7 +16,6 @@ const config = {
   },
   devServer: {
     hot: true,
-    open: true,
     host: 'localhost',
     static: {
       directory: path.join(__dirname, 'public'),
@@ -61,8 +60,17 @@ const config = {
         }
       },
       {
-        test: /\.less$/i,
-        use: [stylesHandler, 'css-loader', 'less-loader'],
+        test: /\.css$/,
+        sideEffects: true,
+        use: [
+          stylesHandler,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: !isProduction
+            }
+          }
+        ]
       },
     ],
   },
