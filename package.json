@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@playwright/test": "^1.36.1",
     "@tsconfig/svelte": "^5.0.0",
     "@webpack-cli/generators": "^3.0.7",
     "css-loader": "^6.7.3",
@@ -22,11 +23,13 @@
   "description": "Wisebits",
   "name": "wisebits",
   "scripts": {
+    "test": "npx playwright test",
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
-    "serve": "webpack serve"
+    "serve": "webpack serve",
+    "server:prod": "npm run build:prod && npx http-server ./public"
   },
   "dependencies": {
     "p-retry": "^5.1.2"

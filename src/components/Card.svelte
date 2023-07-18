@@ -3,6 +3,7 @@
 
   import Chips from './Chips.svelte';
 
+  export let testId;
   export let image;
   export let topImageText = '';
   export let infoText = '';
@@ -27,7 +28,7 @@
   });
 </script>
 
-<div class="root {$$props.class}" style={$$props.style}>
+<div class="root {$$props.class}" style={$$props.style} data-testid={testId}>
   <div class="image" style:background-image="url('{internalImage}')">
     <div class="image-text">
       {topImageText}

@@ -6,10 +6,19 @@
   import { fetchCoffee } from './libs/fetchCoffee';
   import type { Coffee } from './types';
 
-  const AUTOLOAD_INTERVAL = 30000;
   let newDataDownloadTimeout;
   let newDataIsLoading = false;
   let coffees: Coffee[] = [];
+
+  // Made only as a test example.
+  window.app = {
+    autoLoadInterval: 30000,
+    setAutoLoadInterval(interval: number) {
+      window.app.autoLoadInterval = interval;
+    },
+  };
+
+  void fetchNewData('There is an error, please, reload the page');
 
   async function fetchNewData(alertMessage?: string) {
     if (newDataIsLoading) {
@@ -33,12 +42,8 @@
   }
 
   function createTimeoutFetch() {
-    newDataDownloadTimeout = setTimeout(() => fetchNewData(), AUTOLOAD_INTERVAL);
+    newDataDownloadTimeout = setTimeout(() => fetchNewData(), window.app.autoLoadInterval);
   }
-
-  onMount(() => {
-    void fetchNewData('There is an error, please, reload the page');
-  });
 
   function handleAddClick() {
     void fetchNewData('There is an error, please, try again');
@@ -50,6 +55,7 @@
     <Card
       class="app__card"
       style="--card-index: {i}"
+      testId="card-{i}"
       image={'https://loremflickr.com/300/250/coffee'}
       topImageText={coffee.intensifier}
       infoText={coffee.origin}
@@ -66,6 +72,7 @@
   {/if}
   <FabButton
     class="app__add-button"
+    testId="add-button"
     disabled={newDataIsLoading}
     on:click={handleAddClick}
   />

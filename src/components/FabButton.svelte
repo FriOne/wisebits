@@ -1,7 +1,14 @@
 <script lang="ts">
+  export let testId;
   export let disabled = false;
 </script>
-<button class="root {$$props.class}" disabled="{disabled}" on:click>
+
+<button
+  class="root {$$props.class}"
+  disabled="{disabled}"
+  on:click
+  data-testid={testId}
+>
 </button>
 
 <style>
